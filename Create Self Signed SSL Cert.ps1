@@ -1,0 +1,1 @@
+﻿New-SelfSignedCertificate -DnsName "blawlaw.com" -CertStoreLocation "cert:\LocalMachine\My"
