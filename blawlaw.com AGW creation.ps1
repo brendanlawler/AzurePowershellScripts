@@ -33,7 +33,7 @@ $frontendport = New-AzureRmApplicationGatewayFrontendPort `
 $address1 = Get-AzureRmNetworkInterface -ResourceGroupName $rsgweb -Name myNic1
 $address2 = Get-AzureRmNetworkInterface -ResourceGroupName $rsgweb -Name myNic2
 $backendPool = New-AzureRmApplicationGatewayBackendAddressPool `
-  -Name myAGBackendPool `
+  -Name BackendPool-01 `
   -BackendIPAddresses $address1.ipconfigurations[0].privateipaddress, $address2.ipconfigurations[0].privateipaddress
 $poolSettings = New-AzureRmApplicationGatewayBackendHttpSettings `
   -Name myPoolSettings `
