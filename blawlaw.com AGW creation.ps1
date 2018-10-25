@@ -57,7 +57,7 @@ $frontendRule = New-AzureRmApplicationGatewayRequestRoutingRule `
   $sku = New-AzureRmApplicationGatewaySku `
   -Name Standard_Small `
   -Tier Standard `
-  -Capacity 2 
+  -Capacity 1
 New-AzureRmApplicationGateway `
   -Name $agwname `
   -ResourceGroupName $rsgagw `
