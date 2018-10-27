@@ -44,12 +44,19 @@ Select-AzureRmSubscription -SubscriptionId "78a56ad7-5cea-4967-a51e-ddc8523ff5ea
 ### Add whitelist cert ###
 ############################
 
-    $authcertname1 = 'brlawlaw.com-cer'
-    $whitelistCertPath = "C:\Users\Jack\Desktop\blawlaw.com.cer"
-    $agw | Add-AzureRmApplicationGatewayAuthenticationCertificate -Name $authcertname1 -CertificateFile $whitelistCertPath
+    #$authcertname1 = 'brlawlaw.com-cer'
+    #$whitelistCertPath = "C:\Users\Jack\Desktop\blawlaw.com.cer"
+    #$agw | Add-AzureRmApplicationGatewayAuthenticationCertificate -Name $authcertname1 -CertificateFile $whitelistCertPath
 
 #Define Whitelist Cert variable
-    $authcert01 = $agw.AuthenticationCertificates | ?{$_.Name -eq "$authcertname1"}
+    #$authcert01 = $agw.AuthenticationCertificates | ?{$_.Name -eq "$authcertname1"}
+
+    $rootcertname1 = 'brlawlaw.com-cer'
+    $rootcertpath1 = "C:\Users\Jack\Desktop\blawlaw.com.cer"
+#Create trusted route certificate
+    $trustedRootCert01 = New-AzureRmApplicationGatewayTrustedRootCertificate -Name $rootcertname1 -CertificateFile  $rootcertpath1
+
+    
 
 ############################
 ## Add .pfx for listener ###
@@ -76,8 +83,8 @@ Select-AzureRmSubscription -SubscriptionId "78a56ad7-5cea-4967-a51e-ddc8523ff5ea
     $httpprobe02 = $agw.Probes | ?{$_.Name -eq "$hostName1-$customport1-probe"}
 
 #Loads the current AGW config and adds three backend HTTP Setting objects
-    $agw | Add-AzureRmApplicationGatewayBackendHttpSettings -Name "$hostName1-https-setting" -Port 443 -Protocol Https -CookieBasedAffinity Enabled -RequestTimeout 120 -AuthenticationCertificates $authcert01 -Probe $httpprobe01
-    $agw | Add-AzureRmApplicationGatewayBackendHttpSettings -Name "$hostName1-$customport1-setting" -Port $customport1 -Protocol Https -CookieBasedAffinity Enabled -RequestTimeout 120 -AuthenticationCertificates $authcert01 -Probe $httpprobe02
+    $agw | Add-AzureRmApplicationGatewayBackendHttpSettings -Name "$hostName1-https-setting" -Port 443 -Protocol Https -CookieBasedAffinity Enabled -RequestTimeout 120 -TrustedRootCertificate $trustedRootCert01.Name -Probe $httpprobe01
+    $agw | Add-AzureRmApplicationGatewayBackendHttpSettings -Name "$hostName1-$customport1-setting" -Port $customport1 -Protocol Https -CookieBasedAffinity Enabled -RequestTimeout 120 -TrustedRootCertificate $trustedRootCert01.Name -Probe $httpprobe02
 #Creates HTTP setting variable
     $poolSetting01 = $agw.BackendHttpSettingsCollection  | ?{$_.Name -eq "$hostName1-https-setting"}
     $poolSetting02 = $agw.BackendHttpSettingsCollection  | ?{$_.Name -eq "$hostName1-$customport1-setting"}
@@ -106,8 +113,6 @@ Select-AzureRmSubscription -SubscriptionId "78a56ad7-5cea-4967-a51e-ddc8523ff5ea
 
 #Commits the updated $agw config to the Azure Application Gateway (Update time varies and potential downtime experienced)
     $agw | Set-AzureRmApplicationGateway
-
-    Get-AzureRmApplicationGatewaySku -ApplicationGateway $agw
 
     
     
