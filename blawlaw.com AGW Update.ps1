@@ -56,7 +56,6 @@ Select-AzureRmSubscription -SubscriptionId "78a56ad7-5cea-4967-a51e-ddc8523ff5ea
 #Create trusted route certificate
     $trustedRootCert01 = New-AzureRmApplicationGatewayTrustedRootCertificate -Name $rootcertname1 -CertificateFile  $rootcertpath1
 
-    
 
 ############################
 ## Add .pfx for listener ###
